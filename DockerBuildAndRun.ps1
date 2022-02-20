@@ -1,3 +1,9 @@
+$ProjectPath = "..." #Project path
+$WebSitePath = "..." #Home.php #Website Path you want to navigate to when the applucation is build and containerised
+$ContinerName = "..." #Name for container
+$PostContinerKillSleepDuration = 1 #Set the amount of time the script should sleep after killing the container and proceeding
+$ImageName = "..." #Names of image you want to build/rebuild
+
 echo ""
 echo "> Starting Script"
 echo ""
@@ -17,11 +23,6 @@ echo "> Done"
 echo ""
 
 echo "> Changing to project directory..."
-$ProjectPath = "..." #Project path
-$WebSitePath = "..." #Home.php #Website Path you want to navigate to when the applucation is build and containerised
-$ContinerName = "..." #Name for container
-$PostContinerKillSleepDuration = 1 #Set the amount of time the script should sleep after killing the container and proceeding
-$ImageName = "..." #Names of image you want to build/rebuild
 cd $ProjectPath 
 if ($?)
 {
@@ -46,11 +47,11 @@ if ($?)
             echo ""
         }
         Start-Sleep -s $PostContinerKillSleepDuration #Gives sometime for the old container to die
-        if($(docker images -f “dangling=true” -q).count -gt 0) { #Checks if there are dangling images
+        if($(docker images -f â€œdangling=trueâ€ -q).count -gt 0) { #Checks if there are dangling images
             echo ">Deleting Dangling Docker Images..."
             echo ">Deleted Images:"
             echo "================"
-            docker rmi $(docker images -f “dangling=true” -q) #Removes dangling images
+            docker rmi $(docker images -f â€œdangling=trueâ€ -q) #Removes dangling images
             if ($?)
             {
                 echo "> Done"
