@@ -16,7 +16,7 @@ echo ""
 #Checks to see if the variables in line 1 to 4 have been set to something outside of the default
 echo "> Checking If Script Varables Have Been Set..."
 if(($ProjectPath -eq "C:\...") -or ($ImageName -eq "...") -or ($ContinerName -eq "...") -or ($WebSitePath -eq "https://localhost/...")) {
-    echo "> Not All The Variables At Line 1 to 4 Of The Script Have Been Set! Please Edit The Script And Changes These Values!"
+    echo "> Some Or All The Variables At Line 1 to 4 Of The Script Have Not Been Set! Please Edit The Script And Changes These Values From The Default!"
     echo "!!!!!!!!!!!!!!!"
     echo "Aborting Script"
     echo "!!!!!!!!!!!!!!!"
@@ -24,7 +24,7 @@ if(($ProjectPath -eq "C:\...") -or ($ImageName -eq "...") -or ($ContinerName -eq
     Exit
 }
 echo "> Variables Were Set"
-echo "> Done"
+echo ">> Done"
 echo ""
 
 echo "> Checking If .wslconfig File Exists In User Directory"
@@ -39,27 +39,27 @@ else
     Set-Content ($env:USERPROFILE + '\.wslconfig') "[wsl2]`nmemory=6GB`nprocessors=4"
     echo "> Created .wslconfig File - Limiting The Memory To 6gb, And Assigning 4 Processors"
 }
-echo "> Done"
+echo ">> Done"
 echo ""
 
 echo "> Changing To Project Directory..."
 cd $ProjectPath 
 if ($?)
 {
-    echo "> Done"
+    echo ">> Done"
     echo ""
     echo "> Building Project..."
     dotnet build #Builds project in DotNet
     if ($?)
     {
-        echo "Finished Building"
-        echo "> Done"
+        echo ">Finished Building"
+        echo ">> Done"
         echo ""
         echo "> Killing Old Container..."
         docker kill $ContinerName #Kills old container before rebuilding image
         if ($?)
         {
-            echo "> Done"
+            echo ">> Done"
             echo ""
         }
         else {
@@ -74,12 +74,12 @@ if ($?)
             docker rmi $(docker images -f “dangling=true” -q) #Removes dangling images
             if ($?)
             {
-                echo "> Done"
+                echo ">> Done"
                 echo ""
             }
             else {
                 echo "> WARNING: AN ERROR OCCURRED WHILE PRUNING OLD IMAGES. PROCEEDING WITH EXECUTION REGARDLESS!"
-                echo "> Done"
+                echo ">> Done"
                 echo ""
             }
         }
@@ -119,19 +119,19 @@ if ($?)
         {
             echo "> WARNING: AN ERROR OCCURRED WHILE PRUNING DOCKER NETWORKS. PROCEEDING WITH EXECUTION REGARDLESS!"
         }
-        echo "> Done"
+        echo ">> Done"
         echo ""
 
         echo "> Building Docker Image..."
         docker build -t $ImageName . #Builds image using the dockerfile in the current directory (the one specified before - hence the dot)
         if ($?)
         {
-            echo "> Done"
+            echo ">> Done"
             echo ""
         }
         else {
             echo "> WARNING: AN ERROR OCCURRED WHILE BUILDING THE DOCKER IMAGE. PROCEEDING WITH EXECUTION OF SCRIPT AND ASSUMING IT DID NOT PREVENT THE CREATION OF THE IMAGE"
-            echo "> Done"
+            echo ">> Done"
             echo ""
         }
         #Checks to see if you have HTTPS certificates set up in dotnet, and sets them up if they're not
@@ -142,11 +142,13 @@ if ($?)
             dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\aspnetapp.pfx -p password
             dotnet dev-certs https --trust
             dotnet dev-certs https --check
-            echo "> Done"
+            echo ">> Done"
+            echo ""
         }
         else {
             echo "> Certificate Found"
-            echo "> Done"
+            echo ">> Done"
+            echo ""
         }
 
         echo "> Creating And Running Docker Container Form $ImageName Image..."
@@ -156,14 +158,14 @@ if ($?)
         docker run -d --name $ContinerName --rm -it -p 8000:80 -p 8001:443 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=8001 -e ASPNETCORE_Kestrel__Certificates__Default__Password="password" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx -v $env:USERPROFILE\.aspnet\https:/https/ $ImageName
         if ($?)
         {
-            echo "> Done"
+            echo ">> Done"
             echo ""
             echo "> Navigating To '$WebSitePath'..."
             Start-Sleep -s 2
             Start-Process $WebSitePath #Opens the provided webpath in your default browser is all goes well
             if ($?)
             {            
-                echo "> Done"
+                echo ">> Done"
                 echo ""
                 echo "======================================="
                 echo "script Successfully Finished Executing!"
