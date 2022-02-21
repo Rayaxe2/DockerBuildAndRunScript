@@ -1,7 +1,7 @@
-$ProjectPath = "C:\..." #Project path
-$ImageName = "..." #Names of image you want to build/rebuild
-$ContinerName = "..." #Name for container
-$WebSitePath = "https://localhost/..." #Home.php #Website Path you want to navigate to when the applucation is build and containerised
+$ProjectPath = "D:\Proj\lossguipages" #Project path
+$ImageName = "lossgui" #Names of image you want to build/rebuild - the name must be all lowercase!
+$ContinerName = "lossguiTestContainer" #Name for container
+$WebSitePath = "https://localhost/hvcm/ViewCallbackIncidents.php" #Home.php #Website Path you want to navigate to when the applucation is build and containerised
 
 $PostContinerKillSleepDuration = 2 #Sets the amount of time the script should sleep after killing the container and proceeding
 $PostErrorSleepDutation = 2 #Sets the amount of time the script should sleep after and error occurs and the script ends as a result
@@ -13,7 +13,7 @@ echo ""
 echo "> Checking If .wslconfig File Exists In User Directory"
 if([System.IO.File]::Exists($env:USERPROFILE + '\.wslconfig')) #Checks if there is a file call .wslconfig in the user directory
 {
-    echo "> .wslconfig found in $env:USERPROFILE directory"
+    echo "> '.wslconfig' File Found In $env:USERPROFILE Directory"
 }
 else 
 {
@@ -25,7 +25,7 @@ else
 echo "> Done"
 echo ""
 
-echo "> Changing to project directory..."
+echo "> Changing To Project Directory..."
 cd $ProjectPath 
 if ($?)
 {
@@ -38,7 +38,7 @@ if ($?)
         echo "Finished Building"
         echo "> Done"
         echo ""
-        echo "> Killing old container..."
+        echo "> Killing Old Container..."
         docker kill $ContinerName #Kills old container before rebuilding image
         if ($?)
         {
@@ -118,14 +118,23 @@ if ($?)
             echo ""
         }
         #You only need to run the bellow once - to set up the HTTPS certificates
+        echo "> Checking If HTTPS Certificates Have Been Set Up..."
+        if((dotnet dev-certs https --check) -eq ""){
+            echo "> No HTTPS Certificats Found For Project"
+            echo "> Setting Up HTTPS Certificates..."
+            dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\aspnetapp.pfx -p password
+            dotnet dev-certs https --trust
+            dotnet dev-certs https --check
+            echo "> Done"
+        }
+        else {
+            echo "> Certification Found"
+            echo "> Done"
+        }
 
-        #echo "> Setting up HTTPS certificates"
-        #dotnet dev-certs https -ep $env:USERPROFILE\.aspnet\https\aspnetapp.pfx -p password
-        #dotnet dev-certs https --trust
-        #echo "> Done"
-
-        echo "> Creating and running docker container for image..."
+        echo "> Creating And Running Docker Container Form $ImageName Image..."
         echo "Image Referance:"
+        echo "================"
         #Runs a container made from the image build above - setting it to the container name, running it on ports 8000 for HTTP and 8001 for HTTPs
         docker run -d --name $ContinerName --rm -it -p 8000:80 -p 8001:443 -e ASPNETCORE_URLS="https://+;http://+" -e ASPNETCORE_HTTPS_PORT=8001 -e ASPNETCORE_Kestrel__Certificates__Default__Password="password" -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx -v $env:USERPROFILE\.aspnet\https:/https/ $ImageName
         if ($?)
