@@ -1,7 +1,7 @@
-$ProjectPath = "D:\Proj\lossguipages" #Project path
-$ImageName = "lossgui" #Names of image you want to build/rebuild - the name must be all lowercase!
-$ContinerName = "lossguiTestContainer" #Name for container
-$WebSitePath = "https://localhost/hvcm/ViewCallbackIncidents.php" #Home.php #Website Path you want to navigate to when the applucation is build and containerised
+$ProjectPath = "C:\..." #Project path
+$ImageName = "...lossgui" #Names of image you want to build/rebuild - the name must be all lowercase!
+$ContinerName = "..." #Name for container
+$WebSitePath = "https://localhost/..." #Home.php #Website Path you want to navigate to when the applucation is build and containerised
 
 $PostContinerKillSleepDuration = 2 #Sets the amount of time the script should sleep after killing the container and proceeding
 $PostErrorSleepDutation = 2 #Sets the amount of time the script should sleep after and error occurs and the script ends as a result
