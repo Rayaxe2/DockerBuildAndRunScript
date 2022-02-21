@@ -1,5 +1,5 @@
 $ProjectPath = "C:\..." #Project path
-$ImageName = "...lossgui" #Names of image you want to build/rebuild - the name must be all lowercase!
+$ImageName = "..." #Names of image you want to build/rebuild - the name must be all lowercase!
 $ContinerName = "..." #Name for container
 $WebSitePath = "https://localhost/..." #Home.php #Website Path you want to navigate to when the applucation is build and containerised
 
@@ -8,8 +8,25 @@ $PostErrorSleepDutation = 2 #Sets the amount of time the script should sleep aft
 $PostScriptSuccessSleepDuration = 1 #Sets the amount of time the script should sleep after the script succesfully finishes executing
 
 echo ""
-echo "> Starting Script"
+echo "/==============\"
+echo "Starting Script"
+echo "\==============/"
 echo ""
+
+#Checks to see if the variables in line 1 to 4 have been set to something outside of the default
+echo "> Checking If Script Varables Have Been Set..."
+if(($ProjectPath -eq "C:\...") -or ($ImageName -eq "...") -or ($ContinerName -eq "...") -or ($WebSitePath -eq "https://localhost/...")) {
+    echo "> Not All The Variables At Line 1 to 4 Of The Script Have Been Set! Please Edit The Script And Changes These Values!"
+    echo "!!!!!!!!!!!!!!!"
+    echo "Aborting Script"
+    echo "!!!!!!!!!!!!!!!"
+    Start-Sleep -s $PostErrorSleepDutation
+    Exit
+}
+echo "> Variables Were Set"
+echo "> Done"
+echo ""
+
 echo "> Checking If .wslconfig File Exists In User Directory"
 if([System.IO.File]::Exists($env:USERPROFILE + '\.wslconfig')) #Checks if there is a file call .wslconfig in the user directory
 {
@@ -117,7 +134,7 @@ if ($?)
             echo "> Done"
             echo ""
         }
-        #You only need to run the bellow once - to set up the HTTPS certificates
+        #Checks to see if you have HTTPS certificates set up in dotnet, and sets them up if they're not
         echo "> Checking If HTTPS Certificates Have Been Set Up..."
         if((dotnet dev-certs https --check) -eq ""){
             echo "> No HTTPS Certificats Found For Project"
@@ -128,7 +145,7 @@ if ($?)
             echo "> Done"
         }
         else {
-            echo "> Certification Found"
+            echo "> Certificate Found"
             echo "> Done"
         }
 
@@ -141,7 +158,7 @@ if ($?)
         {
             echo "> Done"
             echo ""
-            echo "> Navigating to '$WebSitePath'..."
+            echo "> Navigating To '$WebSitePath'..."
             Start-Sleep -s 2
             Start-Process $WebSitePath #Opens the provided webpath in your default browser is all goes well
             if ($?)
@@ -149,7 +166,7 @@ if ($?)
                 echo "> Done"
                 echo ""
                 echo "======================================="
-                echo "script successfully finished executing!"
+                echo "script Successfully Finished Executing!"
                 echo "======================================="
                 echo ""
                 docker ps
@@ -167,7 +184,7 @@ if ($?)
         else {
             echo "> ERROR: COULD NOT CREATE A CONTAINER FROM THE DOCKER IMAGE"
             echo "!!!!!!!!!!!!!!!"
-            echo "Script aborting"
+            echo "Aborting Script"
             echo "!!!!!!!!!!!!!!!"
             Start-Sleep -s $PostErrorSleepDutation
         }
@@ -176,7 +193,7 @@ if ($?)
     else {
         echo "> ERROR: COULD NOT SUCCESSFULLY BUILD THE APPLICATION, PLEASE BUILD IN VISUAL STUDIOS AND CHECK FOR BUILD ERRORS"
         echo "!!!!!!!!!!!!!!!"
-        echo "Script aborting"
+        echo "Aborting Script"
         echo "!!!!!!!!!!!!!!!"
         Start-Sleep -s $PostErrorSleepDutation
     }
@@ -184,7 +201,7 @@ if ($?)
 else {
     echo "> ERROR: UNABLE TO FIND OR CHANGE TO THE DIRECTORY '$ProjectPath'"
     echo "!!!!!!!!!!!!!!!"
-    echo "Script aborting"
+    echo "Aborting Script"
     echo "!!!!!!!!!!!!!!!"
     Start-Sleep -s $PostErrorSleepDutation
 }
