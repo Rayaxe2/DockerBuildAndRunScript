@@ -1,8 +1,11 @@
-$ProjectPath = "..." #Project path
-$WebSitePath = "..." #Home.php #Website Path you want to navigate to when the applucation is build and containerised
-$ContinerName = "..." #Name for container
-$PostContinerKillSleepDuration = 1 #Set the amount of time the script should sleep after killing the container and proceeding
+$ProjectPath = "C:\..." #Project path
 $ImageName = "..." #Names of image you want to build/rebuild
+$ContinerName = "..." #Name for container
+$WebSitePath = "https://localhost/..." #Home.php #Website Path you want to navigate to when the applucation is build and containerised
+
+$PostContinerKillSleepDuration = 2 #Sets the amount of time the script should sleep after killing the container and proceeding
+$PostErrorSleepDutation = 2 #Sets the amount of time the script should sleep after and error occurs and the script ends as a result
+$PostScriptSuccessSleepDuration = 1 #Sets the amount of time the script should sleep after the script succesfully finishes executing
 
 echo ""
 echo "> Starting Script"
@@ -141,12 +144,15 @@ if ($?)
                 echo "======================================="
                 echo ""
                 docker ps
+                Start-Sleep -s $PostScriptSuccessSleepDuration
+
             }
             else {
                 echo "> ERROR: COULD NOT NAVIGATE TO '$WebSitePath', PLEASE ATTEMPT TO NAVIGATE TO THE WEBSITE MANAULLY"
                 echo "================"
                 echo "Script Finished."
                 echo "================"
+                Start-Sleep -s $PostScriptSuccessSleepDuration
             }
         }
         else {
@@ -154,6 +160,7 @@ if ($?)
             echo "!!!!!!!!!!!!!!!"
             echo "Script aborting"
             echo "!!!!!!!!!!!!!!!"
+            Start-Sleep -s $PostErrorSleepDutation
         }
         
     }
@@ -162,6 +169,7 @@ if ($?)
         echo "!!!!!!!!!!!!!!!"
         echo "Script aborting"
         echo "!!!!!!!!!!!!!!!"
+        Start-Sleep -s $PostErrorSleepDutation
     }
 } 
 else {
@@ -169,4 +177,5 @@ else {
     echo "!!!!!!!!!!!!!!!"
     echo "Script aborting"
     echo "!!!!!!!!!!!!!!!"
+    Start-Sleep -s $PostErrorSleepDutation
 }
